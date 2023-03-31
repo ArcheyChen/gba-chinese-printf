@@ -83,9 +83,9 @@ int main(void) {
 
 	SetMode (MODE_3 | BG2_ENABLE );
 	
-	DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0, 1);	
+	// DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0, 1);	
 
-	DrawHZText12("≤‚ ‘“ªœ¬",0,2,20, gl_color_text,1);
+	DrawHZText12("≤‚ ‘“ªœ¬∞°∞°∞°∞°∞°∞°",0,2,20, gl_color_text);
 
 	VBlankIntrWait();	
 	while(1);
