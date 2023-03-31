@@ -61,7 +61,7 @@ int main(void) {
 	
 	// DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0);	
 
-	printf_zh("1简单测试一下234567890");
+	printf_zh_color(gl_color_MENU_btn,"1简单测试一下2%s890","\nhello world!!\n");
 	printf_zh("1234567890");
 	printf_zh("123456789\n0");
 	printf_zh("1234567890");

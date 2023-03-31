@@ -149,23 +149,27 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
 		}
 
 	}
-	Cord cord;
-	cord.x = x;
-	cord.y = y;
-	return cord;
+	return Cord{x,y};
 }
 //---------------------------------------------------------------------------------
+
+static char str[128];
+static Cord current_cord={0,0};
 void printf_zh(const char *format, ...)
 {
-	static Cord current_cord={0,0};
-    static char str[128];
     va_list va;
-
     va_start(va, format);
     vsprintf(str, format, va);
     va_end(va);
-
     current_cord = DrawHZText12(str,0,current_cord.x,current_cord.y, RGB(31,31,31));
 	//英文字库结构  12*8 ，高12，宽6 ，前6bit，中文则是宽12
+}
+void printf_zh_color(u16 color,const char *format, ...)
+{
+    va_list va;
+    va_start(va, format);
+    vsprintf(str, format, va);
+    va_end(va);
+    current_cord = DrawHZText12(str,0,current_cord.x,current_cord.y, color);
 }
 //---------------------------------------------------------------------------------
