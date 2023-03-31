@@ -85,11 +85,12 @@ int main(void) {
 	
 	DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0);	
 
-	// DrawHZText12("≤‚ ‘“ªœ¬∞°∞°∞°∞°∞°∞°",0,2,20, gl_color_text);
-	// printf_zh("≤‚ ‘  %d %x",123,0x123);
-	printf_zh("≤‚ ‘");
-	printf_zh("≤‚ ‘");
-	// printf("123");
+	printf_zh("1ºÚµ•≤‚ ‘“ªœ¬234567890");
+	printf_zh("1234567890");
+	printf_zh("123456789\n0");
+	printf_zh("1234567890");
+	printf_zh("1234567890");
+	printf_zh("1234567890");
 	VBlankIntrWait();	
 	while(1);
 }

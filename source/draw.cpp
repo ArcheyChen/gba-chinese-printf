@@ -76,9 +76,9 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
 	u32 i,l,hi=0;
 	u32 location;
 	u8 cc,c1,c2;
-	u16 *vram;
-	vram = VideoBuffer;
-	u16 yy;
+	u16 (*vram)[240];
+	//vram[y][x] vram[240][160]
+	vram = (u16 (*)[240])VideoBuffer;
 
 
 	if(len==0)
@@ -95,36 +95,35 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
     {
 		c1 = str[hi];
     	hi++;
-    	if(c1<0x80)  //ASCII
+		if(c1=='\n'){
+			x=0;
+			y+=12;
+		}
+    	else if(c1<0x80)  //ASCII
     	{
-			yy = 240*y;
+			if(x>=240-6){
+				x = 0;
+				y += 12;
+			}
     		location = c1*12;
     		for(i=0;i<12;i++)//字符的高是12，所以画12次
 			{
 				cc = ASC_DATA[location+i];
-				if(cc & 0x01)	//如果这个字符在第i位是1，那么把对应内存的位置填上color
-					vram[x+7+yy]=color;
-				if(cc & 0x02)
-					vram[x+6+yy]=color;
-				if(cc & 0x04)
-					vram[x+5+yy]=color;
-				if(cc & 0x08)
-					vram[x+4+yy]=color;
-				if(cc & 0x10)
-					vram[x+3+yy]=color;
-				if(cc & 0x20)
-					vram[x+2+yy]=color;
-				if(cc & 0x40)
-					vram[x+1+yy]=color;
-				if(cc & 0x80)
-					vram[x+yy]=color;
-				yy+=240;
+				auto vram_line = &vram[y+i][x];
+				for(int j=0;j<8;j++){//如果这个字符在第i位是1，那么把对应内存的位置填上color
+					if(cc & (1<<j))
+						vram_line[7-j] = color;
+				}
 			}		
     		x+=6;
     		continue;
     	}
 		else	//Double-byte
 		{	
+			if(x>=240-12){
+				x = 0;
+				y += 12;
+			}
     		c2 = str[hi];
     		hi++;
     		if(c1<0xb0)
@@ -132,48 +131,25 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
     		else
     			location = (9*94+(c1-0xb0)*94+(c2-0xa1))*24;
 
-			yy = 240*y;
+			
 			for(i=0;i<12;i++)
 			{				
 				cc = acHZK12[location+i*2];
-				if(cc & 0x01)
-					vram[x+7+yy]=color;
-				if(cc & 0x02)
-					vram[x+6+yy]=color;
-				if(cc & 0x04)
-					vram[x+5+yy]=color;
-				if(cc & 0x08)
-					vram[x+4+yy]=color;
-				if(cc & 0x10)
-					vram[x+3+yy]=color;
-				if(cc & 0x20)
-					vram[x+2+yy]=color;
-				if(cc & 0x40)
-					vram[x+1+yy]=color;
-				if(cc & 0x80)
-					vram[x+yy]=color;
-								
+				auto vram_line = &vram[y+i][x];
+				for(int j=0;j<8;j++){//第一部分
+					if(cc & (1<<j))
+						vram_line[7-j] = color;
+				}
+
 				cc = acHZK12[location+i*2+1];
-				if(cc & 0x01)
-					vram[x+15+yy]=color;
-				if(cc & 0x02)
-					vram[x+14+yy]=color;
-				if(cc & 0x04)
-					vram[x+13+yy]=color;
-				if(cc & 0x08)
-					vram[x+12+yy]=color;
-				if(cc & 0x10)
-					vram[x+11+yy]=color;
-				if(cc & 0x20)
-					vram[x+10+yy]=color;
-				if(cc & 0x40)
-					vram[x+9+yy]=color;
-				if(cc & 0x80)
-					vram[x+8+yy]=color;
-				yy+=240;
+				for(int j=0;j<8;j++){//第二部分
+					if(cc & (1<<j))
+						vram_line[15-j] = color;
+				}
 			}
 			x+=12;
 		}
+
 	}
 	Cord cord;
 	cord.x = x;
@@ -183,7 +159,7 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
 //---------------------------------------------------------------------------------
 void printf_zh(const char *format, ...)
 {
-	static int current_y = 1;
+	static Cord current_cord={0,0};
     static char str[128];
     va_list va;
 
@@ -191,14 +167,8 @@ void printf_zh(const char *format, ...)
     vsprintf(str, format, va);
     va_end(va);
 
-    DrawHZText12(str,0,0,current_y, RGB(31,31,31));
-    
-
-    current_y += 12;//英文字库结构  12*8 ，高12，宽6 ，前6bit，中文则是宽12
-    if(current_y>150) 
-    {
-    	current_y=1;
-    }
+    current_cord = DrawHZText12(str,0,current_cord.x,current_cord.y, RGB(31,31,31));
+	//英文字库结构  12*8 ，高12，宽6 ，前6bit，中文则是宽12
 }
 //---------------------------------------------------------------------------------
 void ShowbootProgress(char *str)
