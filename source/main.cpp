@@ -11,11 +11,9 @@
 #include <gba_timers.h>
 
 #include "draw.h"
-#include "ezkernel.h"
-#include "images/splash.h"
+// #include "images/splash.h"
 
 
-u8 pReadCache [MAX_pReadCache_size]EWRAM_BSS;
 
 
 u32 game_total_SD;
@@ -51,28 +49,6 @@ u16 gl_color_cheat_black  = RGB(00,00,00);
 u16 gl_color_NORFULL      = RGB(31,00,00);
 u16 gl_color_btn_clean    = RGB(00,00,31);
 //******************************************************************************
-void delay(u32 R0)
-{
-  int volatile i;
-
-  for ( i = R0; i; --i );
-  return;
-}
-//---------------------------------------------------------------------------------
-void wait_btn()
-{
-	while(1)
-	{
-		scanKeys();
-		u16 keys = keysUp();
-		if (keys & KEY_B) {
-			break;
-		}
-	}
-	//while(*(vu16*)0x04000130 == 0x3FF );
-	//while(*(vu16*)0x04000130 != 0x3FF );
-}
-//---------------------------------------------------------------------------------
 
 int main(void) {
 
@@ -83,7 +59,7 @@ int main(void) {
 
 	SetMode (MODE_3 | BG2_ENABLE );
 	
-	DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0);	
+	// DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0);	
 
 	printf_zh("1ºÚµ•≤‚ ‘“ªœ¬234567890");
 	printf_zh("1234567890");

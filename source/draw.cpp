@@ -10,14 +10,13 @@
 #include "asc126.h"
 #include "draw.h"
 
-#include "ezkernel.h"
+#define MAX_pReadCache_size 0x20000
+u8 pReadCache [MAX_pReadCache_size]EWRAM_BSS;
 
-
-extern u8 pReadCache [MAX_pReadCache_size]EWRAM_BSS;
 //******************************************************************************
 void IWRAM_CODE Clear(u16 x, u16 y, u16 w, u16 h, u16 c)
 {
-	u16 *p = VideoBuffer;
+	u16 *p = (u16*)VRAM;
 	u16 yi,ww,hh;
     
 
@@ -34,7 +33,7 @@ void IWRAM_CODE Clear(u16 x, u16 y, u16 w, u16 h, u16 c)
 //******************************************************************************
 void IWRAM_CODE ClearWithBG(u16* pbg,u16 x, u16 y, u16 w, u16 h)
 {
-	u16 *p = VideoBuffer;;
+	u16 *p = (u16*)VRAM;;
 	u16 yi,ww,hh;
     
     hh = (y+h>160)?160:(y+h);
@@ -46,7 +45,7 @@ void IWRAM_CODE ClearWithBG(u16* pbg,u16 x, u16 y, u16 w, u16 h)
 //******************************************************************************
 void IWRAM_CODE DrawPic(u16 *GFX, u16 x, u16 y, u16 w, u16 h, u8 isTrans, u16 tcolor)
 {
-	u16 *p = VideoBuffer;
+	u16 *p = (u16*)VRAM;
 	u16 c;
 	u16 xi,yi,ww,hh;
 
@@ -78,7 +77,7 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
 	u8 cc,c1,c2;
 	u16 (*vram)[240];
 	//vram[y][x] vram[240][160]
-	vram = (u16 (*)[240])VideoBuffer;
+	vram = (u16 (*)[240])VRAM;
 
 
 	if(len==0)
@@ -116,7 +115,6 @@ Cord DrawHZText12(char *str, u16 len, u16 x, u16 y, u16 color)
 				}
 			}		
     		x+=6;
-    		continue;
     	}
 		else	//Double-byte
 		{	
@@ -171,9 +169,3 @@ void printf_zh(const char *format, ...)
 	//英文字库结构  12*8 ，高12，宽6 ，前6bit，中文则是宽12
 }
 //---------------------------------------------------------------------------------
-void ShowbootProgress(char *str)
-{
-	u8 str_len = strlen(str); 	
-	Clear(60,160-15,120,15,gl_color_cheat_black);	
-	DrawHZText12(str,0,(240-str_len*6)/2,160-15,gl_color_text);	
-}
