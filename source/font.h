@@ -127,7 +127,7 @@ void fbDrawUtf8String(const char *utf8Str, u16 color) {
     fbDrawUnicodeRune(rune,color);
   }
 }
-char printf_str_buffer[512];
+char printf_str_buffer[1024];//一个字最多3B，1K应该不会爆了吧
 void printf_zh(const char *format, ...)
 {
     va_list va;
