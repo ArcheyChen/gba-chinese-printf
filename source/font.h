@@ -3,8 +3,10 @@
 
 #define RGB(r,g,b) ((r)+(g<<5)+(b<<10))
 
-u16 fbPosX;
-u16 fbPosY;
+struct Cord{
+  u16 x,y;
+};
+Cord currentCord;
 
 typedef struct _FB_FONT {
   int valid;
@@ -20,8 +22,8 @@ typedef struct _FB_FONT {
 FB_FONT fbFontCJK16;
 FB_FONT *fbCurrentFont;
 void setPos(u16 x, u16 y){
-  fbPosX = x;
-  fbPosY = y;
+  currentCord.x = x;
+  currentCord.y = y;
 }
 static int fbLoadFontData(FB_FONT *pFont, const char *fontData) {
   memset(pFont, 0, sizeof(FB_FONT));
@@ -57,8 +59,8 @@ static int fbDrawUnicodeRune(u32 rune,u16 color) {
   int screenH = halGetScreenHeight();
   rune = (u16)(rune);
   if (rune == '\n') {
-    fbPosY += fontH + 1;
-    fbPosX = 0;
+    currentCord.y += fontH + 1;
+    currentCord.x = 0;
     return 0;
   }
   u8 pgOffset = fbCurrentFont->pIndex[rune >> 8];
@@ -70,25 +72,25 @@ static int fbDrawUnicodeRune(u32 rune,u16 color) {
   u8 width = *ptr;
   ptr++;
 
-  if (fbPosX + width >= screenW) {
-    fbPosY += fontH + 1;
-    fbPosX = 0;
+  if (currentCord.x + width >= screenW) {
+    currentCord.y += fontH + 1;
+    currentCord.x = 0;
   }
-  if (fbPosY + fontH >= screenH) {
+  if (currentCord.y + fontH >= screenH) {
     return 0;
   }
   for (u8 y = 0; y < fontH; y++) {
     for (u8 x = 0; x < width; x++) {
       u8 pix = ptr[y * 2 + x / 8] & (1 << (x % 8));
       if (pix) {
-        halDrawPixel(fbPosX + x, fbPosY + y, color);
+        halDrawPixel(currentCord.x + x, currentCord.y + y, color);
       }
     }
   }
-  fbPosX += width + 1;
-  if (fbPosX >= screenW) {
-    fbPosY += fontH + 1;
-    fbPosX = 0;
+  currentCord.x += width + 1;
+  if (currentCord.x >= screenW) {
+    currentCord.y += fontH + 1;
+    currentCord.x = 0;
   }
   return width;
 }
