@@ -1,6 +1,7 @@
 #include <gba_video.h>
 #include <gba_interrupt.h>
 #include <gba_systemcalls.h>
+#include <gba_timers.h>
 #include <gba_input.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +11,7 @@
 #include <stdarg.h>
 #include <gba_timers.h>
 
-#include "draw.h"
+#include "font.h"
 // #include "images/splash.h"
 
 
@@ -51,22 +52,46 @@ u16 gl_color_btn_clean    = RGB(00,00,31);
 //******************************************************************************
 
 int main(void) {
-
+	
 	irqInit();
 	irqEnable(IRQ_VBLANK);
 
-	REG_IME = 1;
-
+	
 	SetMode (MODE_3 | BG2_ENABLE );
+
+	REG_IME = 1;
 	
 	// DrawPic((u16*)gImage_splash, 0, 0, 240, 160, 0, 0);	
+	char txt[] = "君不见，黄河之水天上来，奔流到海不复回。"
+"君不见，高堂明镜悲白发，朝如青丝暮成雪。"
+""
+"人生得意须尽欢，莫使金樽空对月。"
+""
+"天生我材必有用，千金散尽还复来。"
+""
+"烹羊宰牛且为乐，会须一饮三百杯。"
+""
+"岑夫子，丹丘生，将进酒，杯莫停。"
+""
+"与君歌一曲，请君为我倾耳听。"
+""
+"钟鼓馔玉不足贵，但愿长醉不愿醒。"
+""
+"古来圣贤皆寂寞，惟有饮者留其名。"
+""
+"陈王昔时宴平乐，斗酒十千恣欢谑。"
+""
+"主人何为言少钱，径须沽取对君酌。"
+""
+"五花马，千金裘，呼儿将出换美酒，与尔同销万古愁。";
+	fbInit();
+	fbDrawUtf8String(txt,gl_color_cheat_count);
 
-	printf_zh_color(gl_color_MENU_btn,"1�򵥲���һ��2%s890","\nhello world!!\n");
-	printf_zh("1234567890");
-	printf_zh("123456789\n0");
-	printf_zh("1234567890");
-	printf_zh("1234567890");
-	printf_zh("1234567890");
+	clearConsole();
+	printf_zh_color(gl_color_MENU_btn,"请看古文：\n%s",txt);
+	// printf_zh_color(gl_color_MENU_btn,"测试\n");
+	
+	
 	VBlankIntrWait();	
 	while(1);
 }
