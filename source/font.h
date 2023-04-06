@@ -59,7 +59,7 @@ static int fbDrawUnicodeRune(u32 rune,u16 color) {
   int screenH = halGetScreenHeight();
   rune = (u16)(rune);
   if (rune == '\n') {
-    currentCord.y += fontH + 1;
+    currentCord.y += fontH + 2;
     currentCord.x = 0;
     return 0;
   }
@@ -73,7 +73,7 @@ static int fbDrawUnicodeRune(u32 rune,u16 color) {
   ptr++;
 
   if (currentCord.x + width >= screenW) {
-    currentCord.y += fontH + 1;
+    currentCord.y += fontH + 2;
     currentCord.x = 0;
   }
   if (currentCord.y + fontH >= screenH) {
@@ -87,9 +87,9 @@ static int fbDrawUnicodeRune(u32 rune,u16 color) {
       }
     }
   }
-  currentCord.x += width + 1;
+  currentCord.x += width + 2;
   if (currentCord.x >= screenW) {
-    currentCord.y += fontH + 1;
+    currentCord.y += fontH + 2;
     currentCord.x = 0;
   }
   return width;

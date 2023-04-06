@@ -87,8 +87,11 @@ int main(void) {
 	fbInit();
 	fbDrawUtf8String(txt,gl_color_cheat_count);
 
+	while(1){
+
 	clearConsole();
-	printf_zh_color(gl_color_MENU_btn,"请看古文：\n%s",txt);
+	printf_zh_color(gl_color_MENU_btn,"请看古文：\n%s",txt);//this will flick
+	}
 	// printf_zh_color(gl_color_MENU_btn,"测试\n");
 	
 	
